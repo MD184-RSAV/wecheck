@@ -52,6 +52,7 @@
 </div>
 
 <script>
+    // La base de données complète reste ici, inchangée.
     const dataSav = {
         "AEG": {mod: "REPARATION EXTERNE", rep: "NICOLAS VERGER", tra: "TNT"},
         "BOSCH": {mod: "REPARATION EXTERNE", rep: "ROBERT BOSCH FRANCE SAS", tra: "CHRONOPOST"},
@@ -73,13 +74,13 @@
         "GYS": {mod: "REPARATION EXTERNE", rep: "GYS SAV", tra: "DPD"},
         "FARTOOL": {mod: "AVOIR AUTOMATIQUE", rep: "N/A", tra: "N/A"},
         "H.JM": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
-        "EQUATION": {mod: "REPARATION EXTERNE (Hotline: 09 77 40 10 16)", rep: "N/A", tra: "N/A"},
+        "EQUATION RADIATEURS": {mod: "REPARATION EXTERNE (Hotline: 09 77 40 10 16)", rep: "N/A", tra: "N/A"},
         "NOIROT": {mod: "REPARATION EXTERNE", rep: "NOIROT", tra: "ENLEVEMENT FOUR"},
         "QLIMA / PVG": {mod: "REPARATION EXTERNE / INTERNE", rep: "FANDI", tra: "DPD"},
         "SAUTER": {mod: "REPARATION EXTERNE (Hotline: 09 77 42 42 42)", rep: "SCGA ECS", tra: "ENLEVEMENT FOUR"},
         "ACOVA": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
         "1ER PRIX / NO NAME": {mod: "REPARATION INTERNE", rep: "MAGASIN", tra: "N/A"},
-        "S&P": {mod: "REPARATION EXTERNE", rep: "S&P FRANCE", tra: "DPD"},
+        "EQUATION VMC": {mod: "REPARATION EXTERNE", rep: "S&P FRANCE", tra: "DPD"},
         "SIGMADIS": {mod: "REPARATION EXTERNE", rep: "SIGMADIS", tra: "DPD"},
         "STERWINS": {mod: "REPARATION INTERNE", rep: "VIT’INSER - VITAMINE T", tra: "DPD / GEODIS"},
         "STERWINS (ROBOTS)": {mod: "REPARATION EXTERNE", rep: "EINHELL SAV", tra: "DPD"},
@@ -117,19 +118,13 @@
         "MTD / TROYBILT": {mod: "A CONSULTER", rep: "MTD", tra: "A vérifier"}
     };
 
-    function normaliser(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
-    }
-
+    function normaliser(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim(); }
     function rechercher() {
         const input = normaliser(document.getElementById('search').value);
         const list = document.getElementById('suggestions');
         list.innerHTML = '';
-        
         if (input.length < 1) { list.style.display = 'none'; return; }
-
         const matches = Object.keys(dataSav).filter(k => normaliser(k).includes(input));
-
         if (matches.length > 0) {
             list.style.display = 'block';
             matches.forEach(m => {
@@ -139,11 +134,8 @@
                 li.onclick = () => afficher(m);
                 list.appendChild(li);
             });
-        } else {
-            list.style.display = 'none';
-        }
+        } else { list.style.display = 'none'; }
     }
-
     function afficher(nom) {
         const info = dataSav[nom];
         document.getElementById('resModop').innerText = info.mod;
