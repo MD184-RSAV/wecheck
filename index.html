@@ -5,28 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeCheck - SAV Le Havre</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 15px; background: #f0f2f5; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { color: #78be20; text-align: center; margin-bottom: 5px; font-size: 28px; }
-        .subtitle { text-align: center; color: #666; font-style: italic; font-size: 0.9em; margin-bottom: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 15px; background: #f4f7f1; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #78be20; text-align: center; margin-bottom: 5px; font-size: 26px; }
+        .subtitle { text-align: center; color: #666; font-style: italic; font-size: 0.85em; margin-bottom: 20px; }
         input { width: 100%; padding: 15px; box-sizing: border-box; border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s; }
         input:focus { border-color: #78be20; }
-        .suggestion-list { list-style: none; padding: 0; margin: 5px 0; border-radius: 10px; background: white; max-height: 200px; overflow-y: auto; border: 1px solid #eee; display: none; }
+        .suggestion-list { list-style: none; padding: 0; margin: 5px 0; border-radius: 10px; background: white; max-height: 250px; overflow-y: auto; border: 1px solid #eee; display: none; }
         .suggestion-item { padding: 15px; border-bottom: 1px solid #f9f9f9; cursor: pointer; font-size: 15px; }
-        .suggestion-item:last-child { border-bottom: none; }
-        .result-box { display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: #f8faf5; border-left: 6px solid #78be20; }
-        .label { font-weight: bold; color: #333; display: block; margin-top: 12px; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
-        .value { color: #444; display: block; margin-bottom: 12px; font-size: 1.1em; line-height: 1.4; }
-        .footer { text-align: center; font-size: 0.75em; color: #aaa; margin-top: 30px; line-height: 1.5; }
+        .suggestion-item:active { background-color: #f0f0f0; }
+        .result-box { display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: #ffffff; border: 1px solid #e0e0e0; border-left: 6px solid #78be20; }
+        .label { font-weight: bold; color: #333; display: block; margin-top: 12px; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { color: #555; display: block; margin-bottom: 12px; font-size: 1.05em; line-height: 1.4; }
+        .footer { text-align: center; font-size: 0.75em; color: #aaa; margin-top: 30px; line-height: 1.6; }
+        mark { background: #eef7e1; color: #4a7514; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>WeCheck ✅</h1>
-    <div class="subtitle">L'assistant WeCARE - Le Havre</div>
+    <div class="subtitle">Assistant SAV Le Havre - v1.1</div>
     
-    <input type="text" id="search" placeholder="Tapez une marque (ex: Ryobi, Bosch...)" oninput="rechercher()">
+    <input type="text" id="search" placeholder="Rechercher une marque..." oninput="rechercher()">
     <ul id="suggestions" class="suggestion-list"></ul>
 
     <div id="result" class="result-box">
@@ -40,8 +41,8 @@
 </div>
 
 <div class="footer">
-    Objectif 2026 : 15j de délai | 55% de réparation<br>
-    Propulsé par la Team SAV Le Havre
+    <b>Objectif 2026 :</b> 15 jours de délai | 55% de réparation<br>
+    <i>Gagne du temps, check tes infos !</i>
 </div>
 
 <script>
@@ -54,7 +55,7 @@
         "MAKITA": {mod: "REPARATION EXTERNE", rep: "MAKITA FRANCE", tra: "CHRONOPOST"},
         "METABO": {mod: "REPARATION EXTERNE", rep: "METABO SAV", tra: "DPD"},
         "PRODIF": {mod: "REPARATION EXTERNE", rep: "PRODIF", tra: "DPD / GEODIS"},
-        "EVOLUTION": {mod: "REPARATION EXTERNE", rep: "A vérifier sur WeCARE", tra: "GEODIS"},
+        "EVOLUTION": {mod: "REPARATION EXTERNE", rep: "A vérifier", tra: "GEODIS"},
         "RYOBI +100€": {mod: "REPARATION EXTERNE", rep: "NICOLAS VERGER", tra: "TNT"},
         "RYOBI -100€": {mod: "AVOIR AUTOMATIQUE", rep: "MAGASIN (Destruction)", tra: "N/A"},
         "SCHEPPACH": {mod: "REPARATION EXTERNE / AVOIR", rep: "ARMREPAR - MAROLLES", tra: "GEODIS"},
@@ -65,46 +66,45 @@
         "MICHELIN": {mod: "REPARATION EXTERNE", rep: "DOMAC", tra: "GEODIS"},
         "GYS": {mod: "REPARATION EXTERNE", rep: "GYS SAV", tra: "DPD"},
         "FARTOOL": {mod: "AVOIR AUTOMATIQUE", rep: "N/A", tra: "N/A"},
-        "HJM": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
-        "EQUATION": {mod: "REPARATION EXTERNE (Hotline: 09 77 40 10 16)", rep: "A vérifier", tra: "A vérifier"},
+        "H.JM": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
+        "EQUATION": {mod: "REPARATION INTERNE (Hotline: 09 77 40 10 16)", rep: "N/A", tra: "N/A"},
         "NOIROT": {mod: "REPARATION EXTERNE", rep: "NOIROT", tra: "ENLEVEMENT FOUR"},
-        "QLIMA / PVG": {mod: "REPARATION INTERNE", rep: "N/A", tra: "N/A"},
+        "QLIMA / PVG": {mod: "REPARATION EXTERNE / INTERNE", rep: "FANDI", tra: "DPD"},
         "SAUTER": {mod: "REPARATION EXTERNE (Hotline: 09 77 42 42 42)", rep: "SCGA ECS", tra: "ENLEVEMENT FOUR"},
-        "ACOVA": {mod: "REPARATION INTERNE", rep: "A vérifier", tra: "N/A"},
+        "ACOVA": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
         "1ER PRIX / NO NAME": {mod: "REPARATION INTERNE", rep: "MAGASIN", tra: "N/A"},
         "S&P": {mod: "REPARATION EXTERNE", rep: "S&P FRANCE", tra: "DPD"},
-        "SIGMADIS": {mod: "REPARATION EXTERNE", rep: "CLIMASTAR", tra: "DPD"},
-        "STERWINS": {mod: "REP. EXTERNE / INTERNE", rep: "VIT’INSER - VITAMINE T", tra: "DPD / GEODIS"},
-        "STERWINS (ROBOTS)": {mod: "REPARATION EXTERNE", rep: "VIT’INSER - VITAMINE T", tra: "DPD / GEODIS"},
-        "WORX": {mod: "REPARATION EXTERNE (Hotline: 01 84 39 60 04)", rep: "ENFINITEC", tra: "DPD"},
+        "SIGMADIS": {mod: "REPARATION EXTERNE", rep: "SIGMADIS", tra: "DPD"},
+        "STERWINS": {mod: "REPARATION INTERNE", rep: "VIT’INSER - VITAMINE T", tra: "DPD / GEODIS"},
+        "STERWINS (ROBOTS)": {mod: "REPARATION EXTERNE", rep: "EINHELL SAV", tra: "DPD"},
+        "WORX": {mod: "REPARATION EXTERNE (Hotline: 01 84 39 60 04)", rep: "LET ME REPAIR", tra: "DPD"},
         "NILFISK": {mod: "REPARATION EXTERNE", rep: "HYDRO M2AC", tra: "DPD"},
-        "STIHL": {mod: "REPARATION EXTERNE", rep: "REMI COURBIER", tra: "DPD"},
-        "EINHELL": {mod: "REPARATION EXTERNE", rep: "A vérifier", tra: "A vérifier"},
+        "STIHL / VIKING": {mod: "REPARATION EXTERNE", rep: "REMI COURBIER / TERNOIS", tra: "DPD"},
+        "EINHELL": {mod: "REPARATION EXTERNE", rep: "EINHELL SAV", tra: "DPD"},
         "GARDENA": {mod: "REPARATION EXTERNE", rep: "ARMREPAR - MAROLLES", tra: "DPD / GEODIS"},
-        "INTEX": {mod: "A CONSULTER (Hotline: 03 85 75 53 98)", rep: "N/A", tra: "A vérifier"},
+        "INTEX": {mod: "REPARATION EXTERNE (Hotline: 03 85 75 53 98)", rep: "N/A", tra: "A vérifier"},
         "BESTWAY": {mod: "A CONSULTER (Hotline: support.bestway.eu)", rep: "N/A", tra: "N/A"},
         "GREENWORKS": {mod: "REPARATION INTERNE", rep: "N/A", tra: "N/A"},
-        "CANADIAN SPA": {mod: "A CONSULTER (canadianspacompany.fr)", rep: "N/A", tra: "N/A"},
-        "TROY BILT / MTD": {mod: "A CONSULTER (02 32 91 94 07)", rep: "N/A", tra: "A vérifier"},
-        "BLACK & DECKER": {mod: "REPARATION EXTERNE", rep: "A vérifier", tra: "A vérifier"},
+        "CANADIAN SPA": {mod: "A CONSULTER (Hotline: canadianspacompany.fr)", rep: "N/A", tra: "N/A"},
+        "TROY BILT / MTD": {mod: "A CONSULTER (Hotline: 02 32 91 94 07)", rep: "MTD / TROYBILT", tra: "A vérifier"},
+        "BLACK & DECKER": {mod: "REPARATION EXTERNE / AVOIR", rep: "SAV Electrisés Dewalt", tra: "DPD"},
         "GROHE": {mod: "REPARATION EXTERNE (Hotline: 01.49.97.29.00)", rep: "ROBINETTERIES SERVICES", tra: "DPD"},
         "SENSEA": {mod: "REPARATION INTERNE", rep: "Magasin", tra: "N/A"},
         "OPALE": {mod: "REPARATION INTERNE", rep: "Magasin", tra: "N/A"},
         "ESSEBAGNO": {mod: "REPARATION INTERNE", rep: "Magasin", tra: "N/A"},
-        "NICE": {mod: "REPARATION EXTERNE (04 42 01 64 43)", rep: "NICE FRANCE SAV", tra: "DPD"},
-        "SOMFY": {mod: "REPARATION EXTERNE (0 820 374 374)", rep: "SOMFY SAV SMP", tra: "A vérifier"},
+        "NICE": {mod: "REPARATION EXTERNE (Hotline: 04 42 01 64 43)", rep: "NICE FRANCE SAV", tra: "DPD"},
+        "SOMFY": {mod: "REPARATION EXTERNE (Hotline: 0 820 374 374)", rep: "SOMFY SAV SMP", tra: "A vérifier"},
         "NETATMO": {mod: "REPARATION EXTERNE", rep: "NETATMO L4 LOGISTICS", tra: "DPD"},
         "EZVIZ": {mod: "AVOIR AUTOMATIQUE", rep: "SFGP SIGMADIS CADELEC", tra: "DPD"},
         "LEXMAN": {mod: "REPARATION EXTERNE", rep: "EHDEV", tra: "DPD"},
-        "EXTEL (motorisation)": {mod: "A CONSULTER (08 92 350 069)", rep: "AVIDSEN", tra: "DPD"},
-        "EXTEL (autre)": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
+        "EXTEL (MOTORISATION)": {mod: "A CONSULTER (Hotline: 08 92 350 069)", rep: "AVIDSEN", tra: "DPD"},
+        "EXTEL (AUTRE)": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
         "TAPO": {mod: "AVOIR AUTOMATIQUE", rep: "Magasin", tra: "N/A"},
-        "PHILLIPS (VISIOPHONE)": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
-        "AVIDSEN": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
+        "PHILIPS": {mod: "REPARATION EXTERNE", rep: "SMARTHOME FRANCE SAV AVIDSEN", tra: "DPD"},
+        "PHILIPS (VISIOPHONE)": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
         "LUMIHOME": {mod: "REPARATION EXTERNE", rep: "LUMIHOME", tra: "DPD"},
-        "METROPOLIGHT": {mod: "A CONSULTER", rep: "A vérifier", tra: "A vérifier"},
-        "EGLO": {mod: "AVOIR AUTOMATIQUE", rep: "N/A", tra: "N/A"},
-        "FLEXIDOOR": {mod: "A CONSULTER (06 46 72 33 93)", rep: "N/A", tra: "A vérifier"},
+        "METROPOLIGHT": {mod: "A CONSULTER", rep: "N/A", tra: "A vérifier"},
+        "FLEXIDOOR": {mod: "A CONSULTER (Hotline: 06 46 72 33 93)", rep: "N/A", tra: "GEODIS"},
         "ATLANTIC": {mod: "HOTLINE / EXTERNE", rep: "ATLANTIC", tra: "DPD"},
         "DELTA DORE": {mod: "REPARATION EXTERNE", rep: "DELTA DORE", tra: "DPD"},
         "S&P FRANCE": {mod: "REPARATION EXTERNE", rep: "S&P FRANCE", tra: "DPD"},
