@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeCheck - SAV Le Havre</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 15px; background: #eee; }
+        .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #78be20; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .res { margin-top: 15px; padding: 10px; background: #f9f9f9; border-left: 4px solid #78be20; display: none; }
+        .item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; background: white; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>WeCheck ✅</h1>
+        <p style="text-align:center; font-style:italic;">Assistant SAV Le Havre</p>
+        <input type="text" id="rech" placeholder="Tapez une marque..." oninput="filtrer()">
+        <div id="liste"></div>
+        <div id="resultat" class="res"></div>
+    </div>
+
+    <script>
+        const sav = {
+            "AEG": "MODOP: EXT | REP: NICOLAS VERGER | TRANS: TNT",
+            "BOSCH": "MODOP: EXT | REP: BOSCH SAS | TRANS: CHRONOPOST",
+            "MAKITA": "MODOP: EXT | REP: MAKITA FRANCE | TRANS: CHRONOPOST",
+            "RYOBI +100": "MODOP: EXT | REP: NICOLAS VERGER | TRANS: TNT",
+            "RYOBI -100": "MODOP: AVOIR | REP: MAGASIN | TRANS: N/A",
+            "KARCHER": "MODOP: EXT | REP: KARCHER SA | TRANS: GEODIS",
+            "FLEXIDOOR": "MODOP: CONSULTER | REP: A VERIFIER | TRANS: GEODIS",
+            "DEXTER": "MODOP: INT/EXT | REP: FANDI | TRANS: DPD"
+        };
+
+        function filtrer() {
+            const val = document.getElementById('rech').value.toUpperCase();
+            const liste = document.getElementById('liste');
+            liste.innerHTML = '';
+            if(!val) return;
+            Object.keys(sav).forEach(m => {
+                if(m.includes(val)) {
+                    const d = document.createElement('div');
+                    d.className = 'item';
+                    d.innerText = m;
+                    d.onclick = () => {
+                        document.getElementById('resultat').innerHTML = sav[m].replace(/\|/g, '<br>');
+                        document.getElementById('resultat').style.display = 'block';
+                        liste.innerHTML = '';
+                        document.getElementById('rech').value = m;
+                    };
+                    liste.appendChild(d);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
