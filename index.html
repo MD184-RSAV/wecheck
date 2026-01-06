@@ -8,7 +8,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
-    
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#78be20">
@@ -18,21 +17,26 @@
         .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1 { color: #78be20; text-align: center; margin-bottom: 5px; font-size: 26px; }
         .subtitle { text-align: center; color: #666; font-style: italic; font-size: 0.85em; margin-bottom: 20px; }
-        input { width: 100%; padding: 15px; box-sizing: border-box; border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; }
+        input { width: 100%; padding: 15px; box-sizing: border-box; border: 2px solid #eee; border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #78be20; }
         .suggestion-list { list-style: none; padding: 0; margin: 5px 0; border-radius: 10px; background: white; max-height: 250px; overflow-y: auto; border: 1px solid #eee; display: none; }
-        .suggestion-item { padding: 15px; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
-        .result-box { display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: #ffffff; border-left: 6px solid #78be20; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .label { font-weight: bold; color: #333; display: block; margin-top: 12px; font-size: 0.8em; text-transform: uppercase; }
-        .value { color: #555; display: block; margin-bottom: 12px; font-size: 1.05em; }
-        .footer { text-align: center; font-size: 0.85em; color: #888; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; }
+        .suggestion-item { padding: 15px; border-bottom: 1px solid #f9f9f9; cursor: pointer; font-size: 15px; }
+        .suggestion-item:active { background-color: #f0f0f0; }
+        .result-box { display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: #ffffff; border: 1px solid #e0e0e0; border-left: 6px solid #78be20; }
+        .label { font-weight: bold; color: #333; display: block; margin-top: 12px; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { color: #555; display: block; margin-bottom: 12px; font-size: 1.05em; line-height: 1.4; }
+        .footer { text-align: center; font-size: 0.85em; color: #888; margin-top: 30px; line-height: 1.6; border-top: 1px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
+
 <div class="container">
     <h1>WeCheck ✅</h1>
     <div class="subtitle">L'assistant de prise en charge WeCARE</div>
+    
     <input type="text" id="search" placeholder="Rechercher une marque..." oninput="rechercher()">
     <ul id="suggestions" class="suggestion-list"></ul>
+
     <div id="result" class="result-box">
         <span class="label">📍 Mode Opératoire</span>
         <span id="resModop" class="value"></span>
@@ -42,33 +46,90 @@
         <span id="resTrans" class="value"></span>
     </div>
 </div>
-<div class="footer">Créé par la team SAV Le Havre - 184</div>
+
+<div class="footer">
+    Créé par la team SAV Le Havre - 184
+</div>
 
 <script>
     const dataSav = {
         "AEG": {mod: "REPARATION EXTERNE", rep: "NICOLAS VERGER", tra: "TNT"},
         "BOSCH": {mod: "REPARATION EXTERNE", rep: "ROBERT BOSCH FRANCE SAS", tra: "CHRONOPOST"},
         "BOSCH / DREMEL": {mod: "REPARATION EXTERNE", rep: "ROBERT BOSCH FRANCE SAS", tra: "CHRONOPOST"},
-        "DEWALT": {mod: "REPARATION EXTERNE", rep: "SAV Electrisés Dewalt/B&D", tra: "DPD"},
+        "DEWALT": {mod: "REPARATION EXTERNE", rep: "SAV Electrisés Dewalt/B&D (HORS Lasers)", tra: "DPD"},
         "DREMEL": {mod: "REPARATION EXTERNE", rep: "ROBERT BOSCH FRANCE SAS", tra: "CHRONOPOST"},
         "MAKITA": {mod: "REPARATION EXTERNE", rep: "MAKITA FRANCE", tra: "CHRONOPOST"},
         "METABO": {mod: "REPARATION EXTERNE", rep: "METABO SAV", tra: "DPD"},
-        "PRODIF": {mod: "REPARATION EXTERNE", rep: "PRODIF", tra: "GEODIS"},
+        "PRODIF": {mod: "REPARATION EXTERNE", rep: "PRODIF", tra: "DPD / GEODIS"},
+        "EVOLUTION": {mod: "REPARATION EXTERNE", rep: "A vérifier", tra: "GEODIS"},
         "RYOBI +100€": {mod: "REPARATION EXTERNE", rep: "NICOLAS VERGER", tra: "TNT"},
-        "RYOBI -100€": {mod: "AVOIR AUTOMATIQUE", rep: "MAGASIN", tra: "N/A"},
-        "KARCHER": {mod: "REPARATION EXTERNE", rep: "KARCHER SA", tra: "GEODIS"},
+        "RYOBI -100€": {mod: "AVOIR AUTOMATIQUE", rep: "MAGASIN (Destruction)", tra: "N/A"},
+        "SCHEPPACH": {mod: "REPARATION EXTERNE / AVOIR", rep: "ARMREPAR - MAROLLES", tra: "GEODIS"},
+        "GUINARD": {mod: "REPARATION EXTERNE", rep: "ARMREPAR - MAROLLES", tra: "GEODIS"},
+        "KARCHER": {mod: "REPARATION EXTERNE", rep: "KARCHER SA", tra: "CHRONOPOST / GEODIS"},
         "DEXTER": {mod: "REPARATION EXTERNE / INTERNE", rep: "FANDI", tra: "DPD"},
-        "STERWINS": {mod: "REPARATION INTERNE", rep: "VIT’INSER", tra: "DPD"},
-        "FLEXIDOOR": {mod: "A CONSULTER (06 46 72 33 93)", rep: "N/A", tra: "GEODIS"}
+        "GRACO": {mod: "REPARATION EXTERNE", rep: "ERMAPRO", tra: "DPD"},
+        "MICHELIN": {mod: "REPARATION EXTERNE", rep: "DOMAC", tra: "GEODIS"},
+        "GYS": {mod: "REPARATION EXTERNE", rep: "GYS SAV", tra: "DPD"},
+        "FARTOOL": {mod: "AVOIR AUTOMATIQUE", rep: "N/A", tra: "N/A"},
+        "H.JM": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
+        "EQUATION": {mod: "REPARATION INTERNE (Hotline: 09 77 40 10 16)", rep: "N/A", tra: "N/A"},
+        "NOIROT": {mod: "REPARATION EXTERNE", rep: "NOIROT", tra: "ENLEVEMENT FOUR"},
+        "QLIMA / PVG": {mod: "REPARATION EXTERNE / INTERNE", rep: "FANDI", tra: "DPD"},
+        "SAUTER": {mod: "REPARATION EXTERNE (Hotline: 09 77 42 42 42)", rep: "SCGA ECS", tra: "ENLEVEMENT FOUR"},
+        "ACOVA": {mod: "REPARATION INTERNE", rep: "SAV INTERNE", tra: "N/A"},
+        "1ER PRIX / NO NAME": {mod: "REPARATION INTERNE", rep: "MAGASIN", tra: "N/A"},
+        "S&P": {mod: "REPARATION EXTERNE", rep: "S&P FRANCE", tra: "DPD"},
+        "SIGMADIS": {mod: "REPARATION EXTERNE", rep: "SIGMADIS", tra: "DPD"},
+        "STERWINS": {mod: "REPARATION INTERNE", rep: "VIT’INSER - VITAMINE T", tra: "DPD / GEODIS"},
+        "STERWINS (ROBOTS)": {mod: "REPARATION EXTERNE", rep: "EINHELL SAV", tra: "DPD"},
+        "WORX": {mod: "REPARATION EXTERNE (Hotline: 01 84 39 60 04)", rep: "LET ME REPAIR", tra: "DPD"},
+        "NILFISK": {mod: "REPARATION EXTERNE", rep: "HYDRO M2AC", tra: "DPD"},
+        "STIHL / VIKING": {mod: "REPARATION EXTERNE", rep: "REMI COURBIER / TERNOIS", tra: "DPD"},
+        "EINHELL": {mod: "REPARATION EXTERNE", rep: "EINHELL SAV", tra: "DPD"},
+        "GARDENA": {mod: "REPARATION EXTERNE", rep: "ARMREPAR - MAROLLES", tra: "DPD / GEODIS"},
+        "INTEX": {mod: "REPARATION EXTERNE (Hotline: 03 85 75 53 98)", rep: "N/A", tra: "A vérifier"},
+        "BESTWAY": {mod: "A CONSULTER (Hotline: support.bestway.eu)", rep: "N/A", tra: "N/A"},
+        "GREENWORKS": {mod: "REPARATION INTERNE", rep: "N/A", tra: "N/A"},
+        "CANADIAN SPA": {mod: "A CONSULTER (Hotline: canadianspacompany.fr)", rep: "N/A", tra: "N/A"},
+        "TROY BILT / MTD": {mod: "A CONSULTER (Hotline: 02 32 91 94 07)", rep: "MTD / TROYBILT", tra: "A vérifier"},
+        "BLACK & DECKER": {mod: "REPARATION EXTERNE / AVOIR", rep: "SAV Electrisés Dewalt", tra: "DPD"},
+        "GROHE": {mod: "REPARATION EXTERNE (Hotline: 01.49.97.29.00)", rep: "ROBINETTERIES SERVICES", tra: "DPD"},
+        "SENSEA": {mod: "REPARATION INTERNE", rep: "Magasin", tra: "N/A"},
+        "OPALE": {mod: "REPARATION INTERNE", rep: "Magasin", tra: "N/A"},
+        "ESSEBAGNO": {mod: "REPARATION INTERNE", rep: "Magasin", tra: "N/A"},
+        "NICE": {mod: "REPARATION EXTERNE (Hotline: 04 42 01 64 43)", rep: "NICE FRANCE SAV", tra: "DPD"},
+        "SOMFY": {mod: "REPARATION EXTERNE (Hotline: 0 820 374 374)", rep: "SOMFY SAV SMP", tra: "A vérifier"},
+        "NETATMO": {mod: "REPARATION EXTERNE", rep: "NETATMO L4 LOGISTICS", tra: "DPD"},
+        "EZVIZ": {mod: "AVOIR AUTOMATIQUE", rep: "SFGP SIGMADIS CADELEC", tra: "DPD"},
+        "LEXMAN": {mod: "REPARATION EXTERNE", rep: "EHDEV", tra: "DPD"},
+        "EXTEL (MOTORISATION)": {mod: "A CONSULTER (Hotline: 08 92 350 069)", rep: "AVIDSEN", tra: "DPD"},
+        "EXTEL (AUTRE)": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
+        "TAPO": {mod: "AVOIR AUTOMATIQUE", rep: "Magasin", tra: "N/A"},
+        "PHILIPS": {mod: "REPARATION EXTERNE", rep: "SMARTHOME FRANCE SAV AVIDSEN", tra: "DPD"},
+        "PHILIPS (VISIOPHONE)": {mod: "REPARATION EXTERNE", rep: "AVIDSEN", tra: "DPD"},
+        "LUMIHOME": {mod: "REPARATION EXTERNE", rep: "LUMIHOME", tra: "DPD"},
+        "METROPOLIGHT": {mod: "A CONSULTER", rep: "N/A", tra: "A vérifier"},
+        "FLEXIDOOR": {mod: "A CONSULTER (Hotline: 06 46 72 33 93)", rep: "N/A", tra: "GEODIS"},
+        "ATLANTIC": {mod: "HOTLINE / EXTERNE", rep: "ATLANTIC", tra: "DPD"},
+        "DELTA DORE": {mod: "REPARATION EXTERNE", rep: "DELTA DORE", tra: "DPD"},
+        "S&P FRANCE": {mod: "REPARATION EXTERNE", rep: "S&P FRANCE", tra: "DPD"},
+        "MTD / TROYBILT": {mod: "A CONSULTER", rep: "MTD", tra: "A vérifier"}
     };
 
-    function normaliser(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim(); }
+    function normaliser(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+    }
+
     function rechercher() {
         const input = normaliser(document.getElementById('search').value);
         const list = document.getElementById('suggestions');
         list.innerHTML = '';
+        
         if (input.length < 1) { list.style.display = 'none'; return; }
+
         const matches = Object.keys(dataSav).filter(k => normaliser(k).includes(input));
+
         if (matches.length > 0) {
             list.style.display = 'block';
             matches.forEach(m => {
@@ -78,8 +139,11 @@
                 li.onclick = () => afficher(m);
                 list.appendChild(li);
             });
-        } else { list.style.display = 'none'; }
+        } else {
+            list.style.display = 'none';
+        }
     }
+
     function afficher(nom) {
         const info = dataSav[nom];
         document.getElementById('resModop').innerText = info.mod;
